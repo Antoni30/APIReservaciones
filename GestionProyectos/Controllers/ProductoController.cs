@@ -5,10 +5,9 @@ namespace GestionProyectos.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductoController : Controller
+    public class ProductoController : ControllerBase
     {
         private readonly AppDBContext _appDbContext;
-        private string? password;
 
         public ProductoController(AppDBContext appDBContext)
         {
@@ -46,6 +45,20 @@ namespace GestionProyectos.Controllers
             return Ok(productoExistente);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarProducto(int id)
+        {
+            var productoExistente = await _appDbContext.Productos.FindAsync(id);
+
+            if (productoExistente == null)
+                return NotFound("El producto no existe");
+
+            _appDbContext.Productos.Remove(productoExistente);
+
+            await _appDbContext.SaveChangesAsync();
+
+            return Ok($"Producto con ID {id} eliminado correctamente");
+        }
 
     }
 }

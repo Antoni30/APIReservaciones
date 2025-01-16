@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionProyectos.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250109172214_InitialCreate")]
+    [Migration("20250116010521_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,22 @@ namespace GestionProyectos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GestionProyectos.Categoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categorias");
+                });
+
             modelBuilder.Entity("GestionProyectos.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -31,6 +47,9 @@ namespace GestionProyectos.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
@@ -41,12 +60,23 @@ namespace GestionProyectos.Migrations
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Stock")
+                    b.Property<int?>("Stock")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoriaId");
+
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("GestionProyectos.Producto", b =>
+                {
+                    b.HasOne("GestionProyectos.Categoria", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
