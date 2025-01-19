@@ -6,48 +6,101 @@ namespace GestionProyectos
     {
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
 
-        public DbSet<Producto> Productos { get; set; }
-        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Clientes> Clientes { get; set; }
+        public DbSet<Habitaciones> Habitaciones { get; set; }
+        public DbSet<Reservas> Reservas { get; set; }
+        public DbSet<ServiciosAdicionales> ServiciosAdicionales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configurar relación entre Producto y Categoria
-            modelBuilder.Entity<Producto>()
-                .HasOne<Categoria>() // Indicar que cada producto tiene una categoría
-                .WithMany() // No es necesario tener relación inversa en Productos
-                .HasForeignKey(p => p.CategoriaId); // La clave foránea en Producto
+            modelBuilder.Entity<Clientes>(entity =>
+            {
+                entity.HasKey(c => c.IdCliente);
+                entity.Property(c => c.IdCliente)
+                      .ValueGeneratedOnAdd();
+                entity.Property(c => c.nombre)
+                      .IsRequired();
+            });
 
-            modelBuilder.Entity<Producto>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd(); // Para hacer que el ID de Producto sea autoincrementable
+            modelBuilder.Entity<Habitaciones>(entity =>
+            {
+                entity.HasKey(h => h.IdHabitacion);
+                entity.Property(h => h.IdHabitacion)
+                      .ValueGeneratedOnAdd();
+                entity.Property(h => h.numero)
+                      .IsRequired();
+            });
 
-            modelBuilder.Entity<Categoria>()
-                .Property(c => c.Id)
-                .ValueGeneratedOnAdd(); // Para hacer que el ID de Categoria sea autoincrementable
+            modelBuilder.Entity<Reservas>(entity =>
+            {
+                entity.HasKey(r => r.IdRecerva);
+                entity.Property(r => r.IdRecerva)
+                      .ValueGeneratedOnAdd(); 
 
-            // Configuración de la clave primaria de Producto
-            modelBuilder.Entity<Producto>()
-                .HasKey(p => p.Id);
+                entity.HasOne<Habitaciones>()
+                      .WithMany()
+                      .HasForeignKey(r => r.IdHabitacionFK) 
+                      .OnDelete(DeleteBehavior.Cascade);
 
-            // Configuración de la clave primaria de Categoria
-            modelBuilder.Entity<Categoria>()
-                .HasKey(c => c.Id);
+                entity.HasOne<Clientes>()
+                      .WithMany()
+                      .HasForeignKey(r => r.IdClienteFK)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ServiciosAdicionales>(entity =>
+            {
+                entity.HasKey(s => s.IdServicio);
+                entity.Property(s => s.IdServicio)
+                      .ValueGeneratedOnAdd();
+
+                entity.HasOne<Reservas>()
+                      .WithMany()
+                      .HasForeignKey(s => s.IdRecervaFK) 
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(s => s.Descripcion)
+                      .HasMaxLength(500);
+                entity.Property(s => s.Costo)
+                      .IsRequired();
+            });
         }
+
     }
 
-    public class Producto
+    public class Clientes
     {
-        public required int Id { get; set; } // No nullable
-        public required int CategoriaId { get; set; } // Clave foránea
-        public string? Nombre { get; set; }
-        public string? Descripcion { get; set; }
+        public int? IdCliente { get; set; } 
+        public required string nombre { get; set; }
+        public string? telefono { get; set; }
+
+        public string? direcccion { get; set; }
+
+    }
+
+    public class Habitaciones
+    {
+        public int? IdHabitacion { get; set; } 
+        public required string numero { get; set; }
+
         public decimal? Precio { get; set; }
-        public int? Stock { get; set; } // Puede ser null
     }
 
-    public class Categoria
+    public class Reservas
     {
-        public required int Id { get; set; } // No nullable
-        public  required string Nombre { get; set; }
+        public int? IdRecerva { get; set; }
+        public required int IdHabitacionFK { get; set; } 
+        public required int IdClienteFK { get; set; }
+        public required DateTime FechaInicio { get; set; }
+        public required DateTime FechaFinal { get; set; }
+    }
+
+    public class ServiciosAdicionales
+    {
+        public int? IdServicio { get; set; }
+        public required int IdRecervaFK { get; set; } 
+        public string? Descripcion { get; set; }
+        public decimal? Costo { get; set; }
     }
 }
+

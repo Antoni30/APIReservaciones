@@ -1,1 +1,1 @@
-C:\Users\DET PC\source\repos\GestionProyectos\GestionProyectos\.sonarqube\out\0
+C:\Users\DET PC\Desktop\Pruebas\Pruebas\GestionProyectosDepartamento\GestionProyectos\.sonarqube\out\0
