@@ -6,27 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GestionProyectos.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Clientes",
+                name: "Cliente",
                 columns: table => new
                 {
                     IdCliente = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    telefono = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    telefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    direcccion = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.IdCliente);
+                    table.PrimaryKey("PK_Cliente", x => x.IdCliente);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Habitaciones",
+                name: "Habitacion",
                 columns: table => new
                 {
                     IdHabitacion = table.Column<int>(type: "int", nullable: false)
@@ -36,11 +37,11 @@ namespace GestionProyectos.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Habitaciones", x => x.IdHabitacion);
+                    table.PrimaryKey("PK_Habitacion", x => x.IdHabitacion);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reservas",
+                name: "Reserva",
                 columns: table => new
                 {
                     IdRecerva = table.Column<int>(type: "int", nullable: false)
@@ -52,17 +53,17 @@ namespace GestionProyectos.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reservas", x => x.IdRecerva);
+                    table.PrimaryKey("PK_Reserva", x => x.IdRecerva);
                     table.ForeignKey(
-                        name: "FK_Reservas_Clientes_IdClienteFK",
+                        name: "FK_Reserva_Cliente_IdClienteFK",
                         column: x => x.IdClienteFK,
-                        principalTable: "Clientes",
+                        principalTable: "Cliente",
                         principalColumn: "IdCliente",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reservas_Habitaciones_IdHabitacionFK",
+                        name: "FK_Reserva_Habitacion_IdHabitacionFK",
                         column: x => x.IdHabitacionFK,
-                        principalTable: "Habitaciones",
+                        principalTable: "Habitacion",
                         principalColumn: "IdHabitacion",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -81,21 +82,21 @@ namespace GestionProyectos.Migrations
                 {
                     table.PrimaryKey("PK_ServiciosAdicionales", x => x.IdServicio);
                     table.ForeignKey(
-                        name: "FK_ServiciosAdicionales_Reservas_IdRecervaFK",
+                        name: "FK_ServiciosAdicionales_Reserva_IdRecervaFK",
                         column: x => x.IdRecervaFK,
-                        principalTable: "Reservas",
+                        principalTable: "Reserva",
                         principalColumn: "IdRecerva",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservas_IdClienteFK",
-                table: "Reservas",
+                name: "IX_Reserva_IdClienteFK",
+                table: "Reserva",
                 column: "IdClienteFK");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservas_IdHabitacionFK",
-                table: "Reservas",
+                name: "IX_Reserva_IdHabitacionFK",
+                table: "Reserva",
                 column: "IdHabitacionFK");
 
             migrationBuilder.CreateIndex(
@@ -111,13 +112,13 @@ namespace GestionProyectos.Migrations
                 name: "ServiciosAdicionales");
 
             migrationBuilder.DropTable(
-                name: "Reservas");
+                name: "Reserva");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "Cliente");
 
             migrationBuilder.DropTable(
-                name: "Habitaciones");
+                name: "Habitacion");
         }
     }
 }

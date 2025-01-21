@@ -22,7 +22,7 @@ namespace GestionProyectos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GestionProyectos.Clientes", b =>
+            modelBuilder.Entity("GestionProyectos.Models.Cliente", b =>
                 {
                     b.Property<int>("IdCliente")
                         .ValueGeneratedOnAdd()
@@ -42,10 +42,10 @@ namespace GestionProyectos.Migrations
 
                     b.HasKey("IdCliente");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("Cliente");
                 });
 
-            modelBuilder.Entity("GestionProyectos.Habitaciones", b =>
+            modelBuilder.Entity("GestionProyectos.Models.Habitacion", b =>
                 {
                     b.Property<int>("IdHabitacion")
                         .ValueGeneratedOnAdd()
@@ -62,10 +62,10 @@ namespace GestionProyectos.Migrations
 
                     b.HasKey("IdHabitacion");
 
-                    b.ToTable("Habitaciones");
+                    b.ToTable("Habitacion");
                 });
 
-            modelBuilder.Entity("GestionProyectos.Reservas", b =>
+            modelBuilder.Entity("GestionProyectos.Models.Reserva", b =>
                 {
                     b.Property<int>("IdRecerva")
                         .ValueGeneratedOnAdd()
@@ -91,10 +91,10 @@ namespace GestionProyectos.Migrations
 
                     b.HasIndex("IdHabitacionFK");
 
-                    b.ToTable("Reservas");
+                    b.ToTable("Reserva");
                 });
 
-            modelBuilder.Entity("GestionProyectos.ServiciosAdicionales", b =>
+            modelBuilder.Entity("GestionProyectos.Models.ServiciosAdicionales", b =>
                 {
                     b.Property<int>("IdServicio")
                         .ValueGeneratedOnAdd()
@@ -119,24 +119,24 @@ namespace GestionProyectos.Migrations
                     b.ToTable("ServiciosAdicionales");
                 });
 
-            modelBuilder.Entity("GestionProyectos.Reservas", b =>
+            modelBuilder.Entity("GestionProyectos.Models.Reserva", b =>
                 {
-                    b.HasOne("GestionProyectos.Clientes", null)
+                    b.HasOne("GestionProyectos.Models.Cliente", null)
                         .WithMany()
                         .HasForeignKey("IdClienteFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GestionProyectos.Habitaciones", null)
+                    b.HasOne("GestionProyectos.Models.Habitacion", null)
                         .WithMany()
                         .HasForeignKey("IdHabitacionFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GestionProyectos.ServiciosAdicionales", b =>
+            modelBuilder.Entity("GestionProyectos.Models.ServiciosAdicionales", b =>
                 {
-                    b.HasOne("GestionProyectos.Reservas", null)
+                    b.HasOne("GestionProyectos.Models.Reserva", null)
                         .WithMany()
                         .HasForeignKey("IdRecervaFK")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -5,7 +5,6 @@ using DotNetEnv;
 var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
 
-// Add services to the container.
 var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? string.Empty;
@@ -23,7 +22,6 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

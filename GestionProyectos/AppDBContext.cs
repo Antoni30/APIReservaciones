@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GestionProyectos.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace GestionProyectos
 {
@@ -6,14 +8,13 @@ namespace GestionProyectos
     {
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
 
-        public DbSet<Clientes> Clientes { get; set; }
-        public DbSet<Habitaciones> Habitaciones { get; set; }
-        public DbSet<Reservas> Reservas { get; set; }
+        public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<Habitacion> Habitacion { get; set; }
+        public DbSet<Reserva> Reserva { get; set; }
         public DbSet<ServiciosAdicionales> ServiciosAdicionales { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Clientes>(entity =>
+            modelBuilder.Entity<Cliente>(entity =>
             {
                 entity.HasKey(c => c.IdCliente);
                 entity.Property(c => c.IdCliente)
@@ -22,7 +23,7 @@ namespace GestionProyectos
                       .IsRequired();
             });
 
-            modelBuilder.Entity<Habitaciones>(entity =>
+            modelBuilder.Entity<Habitacion>(entity =>
             {
                 entity.HasKey(h => h.IdHabitacion);
                 entity.Property(h => h.IdHabitacion)
@@ -31,18 +32,18 @@ namespace GestionProyectos
                       .IsRequired();
             });
 
-            modelBuilder.Entity<Reservas>(entity =>
+            modelBuilder.Entity<Reserva>(entity =>
             {
                 entity.HasKey(r => r.IdRecerva);
                 entity.Property(r => r.IdRecerva)
                       .ValueGeneratedOnAdd(); 
 
-                entity.HasOne<Habitaciones>()
+                entity.HasOne<Habitacion>()
                       .WithMany()
                       .HasForeignKey(r => r.IdHabitacionFK) 
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne<Clientes>()
+                entity.HasOne<Cliente>()
                       .WithMany()
                       .HasForeignKey(r => r.IdClienteFK)
                       .OnDelete(DeleteBehavior.Cascade);
@@ -54,7 +55,7 @@ namespace GestionProyectos
                 entity.Property(s => s.IdServicio)
                       .ValueGeneratedOnAdd();
 
-                entity.HasOne<Reservas>()
+                entity.HasOne<Reserva>()
                       .WithMany()
                       .HasForeignKey(s => s.IdRecervaFK) 
                       .OnDelete(DeleteBehavior.Cascade);
@@ -66,41 +67,6 @@ namespace GestionProyectos
             });
         }
 
-    }
-
-    public class Clientes
-    {
-        public int? IdCliente { get; set; } 
-        public required string nombre { get; set; }
-        public string? telefono { get; set; }
-
-        public string? direcccion { get; set; }
-
-    }
-
-    public class Habitaciones
-    {
-        public int? IdHabitacion { get; set; } 
-        public required string numero { get; set; }
-
-        public decimal? Precio { get; set; }
-    }
-
-    public class Reservas
-    {
-        public int? IdRecerva { get; set; }
-        public required int IdHabitacionFK { get; set; } 
-        public required int IdClienteFK { get; set; }
-        public required DateTime FechaInicio { get; set; }
-        public required DateTime FechaFinal { get; set; }
-    }
-
-    public class ServiciosAdicionales
-    {
-        public int? IdServicio { get; set; }
-        public required int IdRecervaFK { get; set; } 
-        public string? Descripcion { get; set; }
-        public decimal? Costo { get; set; }
     }
 }
 

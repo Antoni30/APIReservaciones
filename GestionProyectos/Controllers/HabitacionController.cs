@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using GestionProyectos.Models;
 
 namespace GestionProyectos.Controllers
 {
@@ -18,25 +19,25 @@ namespace GestionProyectos.Controllers
         [HttpGet]
         public async Task<IActionResult> GetHabitaciones()
         {
-            var habitaciones = await _appDbContext.Habitaciones.ToListAsync();
+            var habitaciones = await _appDbContext.Habitacion.ToListAsync();
             return Ok(habitaciones);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateHabitacion(Habitaciones habitacion)
+        public async Task<IActionResult> CreateHabitacion(Habitacion habitacion)
         {
             if (string.IsNullOrEmpty(habitacion.numero))
                 return BadRequest("El número de la habitación es obligatorio.");
 
-            _appDbContext.Habitaciones.Add(habitacion);
+            _appDbContext.Habitacion.Add(habitacion);
             await _appDbContext.SaveChangesAsync();
             return Ok(habitacion);
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditarHabitacion(Habitaciones habitacion)
+        public async Task<IActionResult> EditarHabitacion(Habitacion habitacion)
         {
-            var habitacionExistente = await _appDbContext.Habitaciones.FindAsync(habitacion.IdHabitacion);
+            var habitacionExistente = await _appDbContext.Habitacion.FindAsync(habitacion.IdHabitacion);
 
             if (habitacionExistente == null)
                 return NotFound("La habitación no existe.");
@@ -50,15 +51,17 @@ namespace GestionProyectos.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarHabitacion(int id)
         {
-            var habitacionExistente = await _appDbContext.Habitaciones.FindAsync(id);
+            var habitacionExistente = await _appDbContext.Habitacion.FindAsync(id);
 
             if (habitacionExistente == null)
                 return NotFound("La habitación no existe.");
 
-            _appDbContext.Habitaciones.Remove(habitacionExistente);
+            _appDbContext.Habitacion.Remove(habitacionExistente);
             await _appDbContext.SaveChangesAsync();
 
             return Ok($"Habitación con ID {id} eliminada correctamente.");
         }
     }
 }
+
+

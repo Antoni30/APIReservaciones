@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using GestionProyectos.Models;
 
 namespace GestionProyectos.Controllers
 {
@@ -26,7 +27,7 @@ namespace GestionProyectos.Controllers
             if (servicioAdicional.Costo < 0)
                 return BadRequest("El costo del servicio adicional no puede ser negativo.");
 
-            var reservaExistente = await _appDbContext.Reservas.FindAsync(servicioAdicional.IdRecervaFK);
+            var reservaExistente = await _appDbContext.Reserva.FindAsync(servicioAdicional.IdRecervaFK);
             if (reservaExistente == null)
                 return NotFound("La reserva especificada no existe.");
 
@@ -45,7 +46,7 @@ namespace GestionProyectos.Controllers
             if (servicioAdicional.Costo < 0)
                 return BadRequest("El costo del servicio adicional no puede ser negativo.");
 
-            var reservaExistente = await _appDbContext.Reservas.FindAsync(servicioAdicional.IdRecervaFK);
+            var reservaExistente = await _appDbContext.Reserva.FindAsync(servicioAdicional.IdRecervaFK);
             if (reservaExistente == null)
                 return NotFound("La reserva especificada no existe.");
 
