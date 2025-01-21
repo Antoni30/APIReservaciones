@@ -10,26 +10,33 @@ namespace GestionProyectos.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly AppDBContext _appDbContext;
+
         public ClienteController(AppDBContext appDBContext)
         {
             _appDbContext = appDBContext;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetClientes()
         {
             var clientes = await _appDbContext.Cliente.ToListAsync();
             return Ok(clientes);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateCliente(Cliente cliente)
         {
             if (string.IsNullOrEmpty(cliente.nombre))
                 return BadRequest("El nombre del cliente es obligatorio.");
 
+            if (string.IsNullOrEmpty(cliente.telefono) || !System.Text.RegularExpressions.Regex.IsMatch(cliente.telefono, @"^\d{10}$"))
+                return BadRequest("El teléfono debe tener exactamente 10 dígitos, por ejemplo: 0986237104.");
+
             _appDbContext.Cliente.Add(cliente);
             await _appDbContext.SaveChangesAsync();
             return Ok(cliente);
         }
+
         [HttpPut]
         public async Task<IActionResult> EditarCliente(Cliente cliente)
         {
@@ -38,12 +45,19 @@ namespace GestionProyectos.Controllers
             if (clienteExistente == null)
                 return NotFound("El cliente no existe.");
 
+            if (string.IsNullOrEmpty(cliente.nombre))
+                return BadRequest("El nombre del cliente es obligatorio.");
+
+            if (string.IsNullOrEmpty(cliente.telefono) || !System.Text.RegularExpressions.Regex.IsMatch(cliente.telefono, @"^\d{10}$"))
+                return BadRequest("El teléfono debe tener exactamente 10 dígitos, por ejemplo: 0986237104.");
+
             clienteExistente.nombre = cliente.nombre;
             clienteExistente.telefono = cliente.telefono;
 
             await _appDbContext.SaveChangesAsync();
             return Ok(clienteExistente);
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarCliente(int id)
         {
@@ -52,17 +66,16 @@ namespace GestionProyectos.Controllers
             if (clienteExistente == null)
                 return NotFound("El cliente no existe.");
 
-            var reservaExistente = _appDbContext.Reserva.FirstOrDefault(reserva => reserva.IdClienteFK == id);
+            var reservasAsociadas = await _appDbContext.Reserva.AnyAsync(reserva => reserva.IdClienteFK == id);
 
-            if (reservaExistente != null)
-            {
-                return NotFound("El cliente tiene reservas pendientes.");
-            }
+            if (reservasAsociadas)
+                return BadRequest("El cliente no se puede eliminar porque está asociado a una o más reservas.");
 
             _appDbContext.Cliente.Remove(clienteExistente);
             await _appDbContext.SaveChangesAsync();
 
             return Ok($"Cliente con ID {id} eliminado correctamente.");
         }
+
     }
 }

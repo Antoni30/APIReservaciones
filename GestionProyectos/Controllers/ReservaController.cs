@@ -15,37 +15,37 @@ namespace GestionProyectos.Controllers
         {
             _appDbContext = appDBContext;
         }
- 
+
         [HttpGet]
         public async Task<IActionResult> GetReservas()
         {
             var reservas = await _appDbContext.Reserva.ToListAsync();
             return Ok(reservas);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateReserva(Reserva reserva)
         {
-            // Validar que la fecha de inicio sea anterior a la fecha final
             if (reserva.FechaInicio >= reserva.FechaFinal)
                 return BadRequest("La fecha de inicio debe ser anterior a la fecha final.");
 
-            // Verificar si la habitación especificada existe
+            if (reserva.FechaFinal <= reserva.FechaInicio)
+                return BadRequest("La fecha de fin no puede ser anterior a la fecha inicial.");
+
             var habitacionExistente = await _appDbContext.Habitacion.FindAsync(reserva.IdHabitacionFK);
             if (habitacionExistente == null)
                 return NotFound("La habitación especificada no existe.");
 
-            // Verificar si la habitación está ocupada en las mismas fechas
             bool habitacionOcupada = await _appDbContext.Reserva.AnyAsync(r =>
                 r.IdHabitacionFK == reserva.IdHabitacionFK &&
-                ((reserva.FechaInicio >= r.FechaInicio && reserva.FechaInicio < r.FechaFinal) || // Fecha de inicio dentro de un rango existente
-                 (reserva.FechaFinal > r.FechaInicio && reserva.FechaFinal <= r.FechaFinal) || // Fecha final dentro de un rango existente
-                 (reserva.FechaInicio <= r.FechaInicio && reserva.FechaFinal >= r.FechaFinal)) // Rango completamente dentro de otro
+                ((reserva.FechaInicio >= r.FechaInicio && reserva.FechaInicio < r.FechaFinal) ||
+                 (reserva.FechaFinal > r.FechaInicio && reserva.FechaFinal <= r.FechaFinal) ||
+                 (reserva.FechaInicio <= r.FechaInicio && reserva.FechaFinal >= r.FechaFinal))
             );
 
             if (habitacionOcupada)
                 return Conflict("La habitación ya está ocupada para las fechas especificadas.");
 
-   
             _appDbContext.Reserva.Add(reserva);
             await _appDbContext.SaveChangesAsync();
             return Ok(reserva);
@@ -62,6 +62,9 @@ namespace GestionProyectos.Controllers
             if (reserva.FechaInicio >= reserva.FechaFinal)
                 return BadRequest("La fecha de inicio debe ser anterior a la fecha final.");
 
+            if (reserva.FechaFinal <= reserva.FechaInicio)
+                return BadRequest("La fecha de fin no puede ser anterior a la fecha inicial.");
+
             var habitacionExistente = await _appDbContext.Habitacion.FindAsync(reserva.IdHabitacionFK);
             if (habitacionExistente == null)
                 return NotFound("La habitación especificada no existe.");
@@ -73,6 +76,7 @@ namespace GestionProyectos.Controllers
             await _appDbContext.SaveChangesAsync();
             return Ok(reservaExistente);
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> EliminarReserva(int id)
         {
